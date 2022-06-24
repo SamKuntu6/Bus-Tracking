@@ -1,0 +1,98 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block extend_head %}
+<title>Trip Management Dashboard</title>
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    
+    <!-- !General Inputs -->
+    <div class="card mb-4">
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Routing Details</h6>
+      </div>
+      <div class="card-body">
+        <form>
+          <div class="form-group">
+            <label for="exampleFormControlInput1">Route Name(No.) :</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1"
+              placeholder="Mbezi-Ubungo-School (MUS)" name="route_name">
+          </div>
+          <div class="form-group">
+            <label for="id-google-address-a">Starting Address:</label>
+            <input type="text" class="form-control" id="id-google-address-a"
+              placeholder="*Begin typing address . . .">
+          </div>
+          <div class="form-group">
+            <label for="id-google-address-b">Way Point 1:</label>
+            <input type="text" class="form-control" id="id-google-address-b"
+              placeholder="*Begin typing address . . .">
+          </div>
+          <div class="form-group">
+            <label for="id-google-address-c">Way Point 2:</label>
+            <input type="text" class="form-control" id="id-google-address-c"
+              placeholder="*Begin typing address . . .">
+          </div>
+          <div class="form-group">
+            <label for="id-google-address-d">Way Point 3:</label>
+            <input type="text" class="form-control" id="id-google-address-d"
+              placeholder="*Begin typing address . . .">
+          </div>
+          <div class="form-group">
+            <label for="id-google-address-e">Way Point 4:</label>
+            <input type="text" class="form-control" id="id-google-address-e"
+              placeholder="*Begin typing address . . .">
+          </div>
+          <div class="form-group">
+            <label for="id-google-address-f">Way Point 5:</label>
+            <input type="text" class="form-control" id="id-google-address-f"
+              placeholder="*Begin typing address . . .">
+          </div>
+          <div class="form-group">
+            <label for="id-google-address-g">Destination:</label>
+            <input type="text" class="form-control" id="id-google-address-g"
+              placeholder="*Begin typing address . . .">
+          </div>
+          
+          <input type="hidden" class="geo" id="id-lat-a" value="">
+          <input type="hidden" class="geo" id="id-long-a" value="">
+          <input type="hidden" class="geo" id="id-lat-b" value="">
+          <input type="hidden" class="geo" id="id-long-b" value="">
+          <input type="hidden" class="geo" id="id-lat-c" value="">
+          <input type="hidden" class="geo" id="id-long-c" value="">
+          <input type="hidden" class="geo" id="id-lat-d" value="">
+          <input type="hidden" class="geo" id="id-long-d" value="">
+          <input type="hidden" class="geo" id="id-lat-e" value="">
+          <input type="hidden" class="geo" id="id-long-e" value="">
+          <input type="hidden" class="geo" id="id-lat-f" value="">
+          <input type="hidden" class="geo" id="id-long-f" value="">
+          <input type="hidden" class="geo" id="id-lat-g" value="">
+          <input type="hidden" class="geo" id="id-long-g" value="">
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extend_footer %}
+
+<script type="text/javascript">
+
+  var google_api_key = "{{google_api_key|safe}}";
+  var base_country = "{{base_country|safe}}";
+
+</script>
+
+<script src="{% static 'js/google_places_waypoints.js' %}"></script>
+
+{% endblock %}

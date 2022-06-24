@@ -1,0 +1,132 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block extend_head %}
+<title>Trip Management Dashboard</title>
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    <!-- Form Basic -->
+
+    <!-- Form Sizing -->
+    
+    <!-- Horizontal Form -->
+   
+    <!-- !General Inputs -->
+    <div class="card mb-4">
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Register Student Information</h6>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="">
+          <div class="form-group">
+            <label for="exampleFormControlInput1">Student's Name:</label>
+            <select class="form-control" id="exampleFormControlInput1" name="stud">
+              <option> --- </option>
+              {% for stud in students %}
+                <option value="{{ reg }}">{{ stud }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlSelect2">Student's Class</label>
+            <select class="form-control" id="exampleFormControlSelect2" name="class">
+              <option> --- </option>
+              <option>Nursery & Kindergarten</option>
+              <option>Standard 1</option>
+              <option>Standard 2</option>
+              <option>Standard 3</option>
+              <option>Standard 4</option>
+              <option>Standard 5</option>
+              <option>Standard 6</option>
+              <option>Standard 7</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput3">Parent's / Guardian's Name:</label>
+            <input type="name" class="form-control" id="exampleFormControlInput3"
+              placeholder="*Enter Parent's / Guardian's name" name="par-name" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput4">Relation:</label>
+            <select class="form-control" id="exampleFormControlSelect4" name="relation" >
+              <option> --- </option>
+              <option>Father</option>
+              <option>Mother</option>
+              <option>Guardian</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput5">Parent's / Guardian's Phone:</label>
+            <input type="phone" class="form-control" id="exampleFormControlInput5"
+              placeholder="0767345232" name="phone" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput6">Email address:</label>
+            <input type="email" class="form-control" id="exampleFormControlInput6"
+              placeholder="name@example.com" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="id-google-address">PickUp Address Location:</label>
+            <input type="text" class="form-control" id="id-google-address"
+              name="google_address" placeholder="*Begin typing address" required>
+          </div>
+
+          <!-- hidden from components below -->
+          <div class="form-group">
+            <label for="exampleFormControlInput8" hidden>Address:</label>
+            {{form.address}}
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput9" hidden>Town/City:</label>
+            {{form.town}}
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput10" hidden>County:</label>
+            {{form.county}}
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput11" hidden>Postal Code:</label>
+            {{form.post_code}} 
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput12" hidden>Country:</label>
+            {{form.country}}
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput13" hidden>Longitude:</label>
+            {{form.longitude}}
+          </div>
+          <div class="form-group">
+            <label for="exampleFormControlInput14" hidden>Latitude:</label>
+            {{form.latitude}}
+          </div>
+
+          <br>
+          <button type="submit" disabled class="btn btn-primary" id="profile-btn">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block extend_footer %}
+<script type="text/javascript">
+
+  var google_api_key = "{{google_api_key|safe}}";
+  var base_country = "{{base_country|safe}}";
+
+</script>
+
+<script src="{% static 'js/google_places.js' %}"></script>
+
+{% endblock %}

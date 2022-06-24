@@ -1,0 +1,119 @@
+{% extends 'main.html' %}
+{% load static %}
+
+
+{% block extend_head %}
+<title>Trip Management Dashboard</title>
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12 mb-4">
+    <!-- Simple Tables -->
+    <div class="card">
+      <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">Simple Tables</h6>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-items-center table-flush">
+          <thead class="thead-light">
+            <tr>
+              <th>Field</th>
+              <th>Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="#">Start</a></td>
+              <td>{{directions.origin}}</td>
+            </tr>
+            <tr>
+              <td><a href="#">Destination</a></td>
+              <td>{{directions.destination}}</td>
+            </tr>
+            <tr>
+              <td><a href="#">Duration</a></td>
+              <td>{{directions.duration}}</td>
+            </tr>
+            <tr>
+              <td><a href="#">Distance</a></td>
+              <td>{{directions.distance}}</td>
+            </tr>
+            <tr>
+              <td><a href="#">Direction</a></td>
+              <td id="dir-toggle"><a class="btn btn-sm btn-primary" href="javascript:void(0)" 
+                onclick="DirectionsToggle()">Click Here</a></td>
+              
+            </tr>
+          </tbody>
+        </table>
+        <hr>
+        <br>
+        <!-- routing generated table for specific directions -->
+        <table class="table align-items-center table-flush" id="dir-table" hidden>
+          <thead class="thead-light">
+            <tr>
+              <th>Directions</th>
+              <th>Distance</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for leg in directions.route %}
+              <tr>
+                <td>Leg {{ forloop.counter }}</td>
+                <td></td>
+                <td></td>  
+              </tr>
+              {% for dist, dur, text in leg.steps %}
+              <tr>
+                <td>{{text|safe}}</td>
+                <td>{{dist}}</td>
+                <td>{{dur}}</td>   
+              </tr>
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="map-container">
+        <div id="map-route">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extend_footer %}
+
+<script type="text/javascript">
+  var google_api_key = "{{google_api_key|safe}}";
+  var lat_a = {{ lat_a|safe }};
+  var long_a = {{long_a|safe}};
+  var lat_b = {{lat_b|safe}};
+  var long_b = {{long_b|safe}};
+  var lat_c = {{lat_c|safe}};
+  var long_c = {{long_c|safe}};
+  var lat_d = {{lat_d|safe}};
+  var long_d = {{long_d|safe}};
+  var lat_e = {{lat_e|safe}};
+  var long_e = {{long_e|safe}};
+  var lat_f = {{lat_f|safe}};
+  var long_f = {{long_f|safe}};
+  var lat_g = {{lat_g|safe}};
+  var long_g = {{long_g|safe}};
+  var origin = "{{origin|safe}}";
+  var destination = "{{destination|safe}}";
+  var directions = {{ directions|safe }}
+
+</script>
+
+<script src="{% static 'js/google_maps.js' %}"></script>
+
+{% endblock %}
