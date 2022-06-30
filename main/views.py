@@ -64,7 +64,8 @@ def directions(request):
 			long_g = long_g,
 			)
 	else:
-		return redirect(reverse('main:create_route'))
+		pass
+		# return redirect(reverse('main:create_route'))
 
 	context = {
 	"google_api_key": settings.GOOGLE_API_KEY,
@@ -85,7 +86,7 @@ def directions(request):
 	"long_g": long_g,
 	"origin": f'{lat_a}, {long_a}',
 	"destination": f'{lat_g}, {long_g}',
-	"directions": directions,
+	# "directions": directions,
 
 	}
 	return render(request, 'main/routesdirection.html', context)
