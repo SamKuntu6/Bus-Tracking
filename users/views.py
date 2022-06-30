@@ -10,8 +10,18 @@ from django.utils.decorators import method_decorator
 from .forms import UserForm
 from django.contrib import messages
 from .models import *
+from main.models import *
 from bustracking.decorators import unauthenticated_user
 
+# firebase imports and initialization
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+cred = credentials.Certificate("bustracking/ServiceAccountKey.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+# end firebase imports
 
 
 from bustracking.mixins import(
@@ -39,7 +49,10 @@ class HomeView(TemplateView):
 
 	@method_decorator(login_required)
 	def dispatch(self, *args, **kwargs):
-		return super().dispatch(*args, **kwargs)
+		context = super(HomeView, self).dispatch(*args, **kwargs)
+		context['trips'] = Trip.objects.all()
+		
+		return context
 
 
 
@@ -87,16 +100,6 @@ def student_create(request):
 	form = UserProfileForm() 
 
 	if request.is_ajax():
-		
-		chosen_user = request.POST.get('stud')
-		stud_class = request.POST.get('class')
-		parent_name = request.POST.get('par-name')
-		relation = request.POST.get('relation')
-		phone = request.POST.get('phone')
-		email = request.POST.get('email')
-
-		print(chosen_user, stud_class, parent_name, relation, phone, email)
-		
 		form = UserProfileForm(data = request.POST)
 		if form.is_valid():
 			obj = form.save()
@@ -108,14 +111,24 @@ def student_create(request):
 			message = FormErrors(form)
 		data = {'result': result, 'message': message}
 		return JsonResponse(data)
-
 	else:
-
 		context = {'form': form}
-	
+
+	chosen_user = request.POST.get('stud')
+	stud_class = request.POST.get('class')
+	parent_name = request.POST.get('par-name')
+	relation = request.POST.get('relation')
+	phone = request.POST.get('phone')
+	email = request.POST.get('email')
+
 	# Student.objects.create(
-    #     user=user_member,
-    # )
+	# 		stud_name=chosen_user,
+	# 		parent_name=parent_name,
+	# 		relationship=relation,
+	# 		classroom=stud_class,
+	# 		parent_phone=phone,
+	# 		email=email,
+	# 	)
 
 	context = {"students":students_list,
 	"google_api_key": settings.GOOGLE_API_KEY,
@@ -125,6 +138,53 @@ def student_create(request):
 
 @login_required(login_url='users:sign-in')
 def student_view(request):
+	# for only this web database
+	all_students = Student.objects.all().values()
 	
-	context = {}
+	# for firestore connection
+	# list_students = []
+	# all_firestore_students = db.collection('students').get()
+	# for student in all_firestore_students:
+	# 	list_students.append(student.to_dict())
+	
+
+	context = {
+		'students': all_students,
+		# 'fire_studs': list_students
+		}
 	return render(request, 'users/studentview.html', context)
+
+
+def delete_student(request, pk):
+	# for only this web database
+	student = Student.objects.get(id=pk)
+	student.delete()
+	messages.success(request, 'Student Info deleted successfully!')
+
+	# for firestore connection
+	return redirect('users:student_view')
+
+
+def update_student(request, pk):
+	# for only this web database
+
+	if Student.objects.filter(id=pk).exists():
+		chosen_stud = request.POST.get('stud')
+		stud_class = request.POST.get('class')
+		parent_name = request.POST.get('par-name')
+		relation = request.POST.get('relation')
+		phone = request.POST.get('phone')
+		email = request.POST.get('email')
+
+		Student.objects.filter(id=pk).update(
+			stud_name=chosen_stud,
+			parent_name=parent_name,
+			relationship=relation,
+			classroom=stud_class,
+			parent_phone=phone,
+			email=email,
+		)
+
+	# for firestore connection
+
+	return redirect('users:student_view')

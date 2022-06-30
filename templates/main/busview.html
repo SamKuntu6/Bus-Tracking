@@ -15,6 +15,13 @@
   <!-- Added buttons -->
   
   <div class="col-lg-12">
+    {% if messages %}
+      <ul class="messages">
+          {% for msg in messages %}
+            <li{% if msg.tags %} class="alert alert-danger"{% endif %}>{{ msg }}</li>
+          {% endfor %}
+      </ul>
+    {% endif %}
     <div class="card mb-4">
       <div class="table-responsive p-3">
         <table class="table align-items-center table-flush table-hover" id="dataTableHover">
@@ -24,29 +31,117 @@
               <th>Driver </th>
               <th>Attendant</th>
               <th>Capacity</th>
-              <th>Location</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
           <tfoot>
           </tfoot>
           <tbody>
-            {% for bs in busses %}
+            {% for bus in busses %}
             <tr>
-              <td>{{ bs.plate_no }}</td>
-              <td>{{ bs.driver_assigned }}</td>
-              <td>{{ bs.attendant_assigned }}</td>
-              <td>{{ bs.capacity }}</td>
-              <td>{{ bs.current_address }}</td>
+              <td>{{ bus.plate_no }}</td>
+              <td>{{ bus.driver_assigned }}</td>
+              <td>{{ bus.attendant_assigned }}</td>
+              <td>{{ bus.capacity }}</td>
+              <td>{{ bus.status }}</td>
               <td>
-                <a href="javascript:void(1);" data-toggle="modal" data-target="#editModal" class="btn btn-info btn-sm">
-                  Upd <i class="fas fa-info-circle"></i>
+                <a href="" data-toggle="modal" 
+                data-target="#editModal{{ bus.id }}" class="btn btn-info btn-sm">
+                  <i class="fas fa-info-circle"></i>
                 </a>
-                <a href="javascript:void(2);" data-toggle="modal" data-target="#deleteModal" class="btn btn-danger btn-sm">
-                  Del <i class="fas fa-trash"></i>
+                <a href="" data-toggle="modal" 
+                data-target="#deleteModal{{ bus.id }}" class="btn btn-danger btn-sm">
+                  <i class="fas fa-trash"></i>
                 </a>
               </td>
             </tr>
+
+            <!-- Inserting modal dialogs here -->
+            
+            <!-- Modal Edit -->
+            <div class="modal fade" id="editModal{{ bus.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabelEdit">Update Bus Details!</h5>
+                </div>
+                <form action="{% url 'main:update_bus' bus.id %}" method="POST">
+                  {% csrf_token %}
+                  <div class="modal-body">
+                    <div class="card-body">
+                        <div class="form-group">
+                          <label for="exampleFormControlInput1">Plate_No:</label>
+                          <input type="text" class="form-control" id="exampleFormControlInput1"
+                            value="{{ bus.plate_no }}" name="plate_no">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleFormControlSelect2">Driver Assigned:</label>
+                          <select class="form-control" id="exampleFormControlSelect2" name="driver">
+                            <option>{{ bus.driver_assigned }}</option>
+                            {% for drv in drivers %}
+                              <option value="{{ drv }}">{{ drv }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleFormControlSelect3">Attendant Assigned:</label>
+                          <select class="form-control" id="exampleFormControlSelect3" name="attendant">
+                            <option>{{ bus.attendant_assigned }}</option>
+                            {% for ats in attendants %}
+                              <option value="{{ ats }}">{{ ats }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleFormControlInput4">Capacity:</label>
+                          <input type="text" class="form-control" id="exampleFormControlInput4"
+                            value="{{ bus.capacity }}" name="capacity">
+                        </div>
+                        <div class="form-group">
+                          <label for="exampleFormControlSelect5">Bus Current State:</label>
+                          <select class="form-control" id="exampleFormControlSelect5" name="state">
+                            <option>{{ bus.status }}</option>
+                            <option>Parking</option>
+                            <option>On-Route</option>
+                            <option>Garage</option>
+                          </select>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" >Update</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            </div>
+            <!-- End modal Edit -->
+
+            <!-- Modal Delete -->
+            <div class="modal fade" id="deleteModal{{ bus.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabeldelete"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabeldelete">Check Info Again!!</h5>
+                </div>
+                <form action="{% url 'main:delete_bus' bus.id %}">
+                  {% csrf_token %}
+                  <div class="modal-body">
+                    <p>Are you sure you want to delete this <strong style="color: rgb(219, 16, 16)">{{ bus.plate_no }}</strong> Info?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            </div>
+            <!-- End modal Delete -->
             {% endfor %}
           </tbody>
         </table>
@@ -57,98 +152,7 @@
 
 {% endblock %}
 
-
 {% block extend_footer %}
-<!-- Modal Edit -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit"
-aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabelEdit">Update Bus Details!</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="card-body">
-        <form method="POST">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="exampleFormControlInput1">Plate_No:</label>
-            <input type="text" class="form-control" id="exampleFormControlInput1"
-              placeholder="T736CDG" required>
-          </div>
-          <div class="form-group">
-            <label for="exampleFormControlSelect2">Driver Assigned:</label>
-            <select class="form-control" id="exampleFormControlSelect2">
-              <option> --- </option>
-              <option>Obby Driver 1</option>
-              <option>Obby Driver 2</option>
-              <option>Obby Driver 3</option>
-              <option>Obby Driver 4</option>
-              <option>Obby Driver 5</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleFormControlSelect3">Attendant Assigned:</label>
-            <select class="form-control" id="exampleFormControlSelect3">
-              <option> --- </option>
-              <option>Obby Attendant 1</option>
-              <option>Obby Attendant 2</option>
-              <option>Obby Attendant 3</option>
-              <option>Obby Attendant 4</option>
-              <option>Obby Attendant 5</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleFormControlInput4">Capacity:</label>
-            <input type="text" class="form-control" id="exampleFormControlInput4"
-              placeholder="32">
-          </div>
-          <div class="form-group">
-            <label for="exampleFormControlSelect5">Bus Current State:</label>
-            <select class="form-control" id="exampleFormControlSelect5">
-              <option> --- </option>
-              <option>Available for work</option>
-              <option>On route</option>
-              <option>Garage</option>
-            </select>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
-      <a href="#" class="btn btn-primary">Update</a>
-    </div>
-  </div>
-</div>
-</div>
-<!-- End modal Edit -->
-
-<!-- Modal Delete -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabeldelete"
-aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="exampleModalLabeldelete">Check Info Again!!</h5>
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p>Are you sure you want to delete this data?</p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
-      <a href="#" class="btn btn-danger">Delete</a>
-    </div>
-  </div>
-</div>
-</div>
-<!-- End modal Delete -->
 
 <script>
   $(document).ready(function () {

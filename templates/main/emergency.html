@@ -30,46 +30,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td><a href="#">T534CBS</a></td>
-              <td>Udin Wayang</td>
-              <td>Nasi Padang</td>
-              <td><span class="badge badge-warning">40 mins</span></td>
-              <td>Mabwe Pande</td>
-              <td><a href="#" class="btn btn-sm btn-primary">View on Map</a></td>
-            </tr>
-            <tr>
-              <td><a href="#">T534CBS</a></td>
-              <td>Udin Wayang</td>
-              <td>Nasi Padang</td>
-              <td><span class="badge badge-warning">40 mins</span></td>
-              <td>Makong</td>
-              <td><a href="#" class="btn btn-sm btn-primary">View on Map</a></td>
-            </tr>
-            <tr>
-              <td><a href="#">T534CBS</a></td>
-              <td>Udin Wayang</td>
-              <td>Nasi Padang</td>
-              <td><span class="badge badge-warning">40 mins</span></td>
-              <td>Mbezi</td>
-              <td><a href="#" class="btn btn-sm btn-primary">View on Map</a></td>
-            </tr>
-            <tr>
-              <td><a href="#">T534CBS</a></td>
-              <td>Udin Wayang</td>
-              <td>Nasi Padang</td>
-              <td><span class="badge badge-warning">40 mins</span></td>
-              <td>Ubungo</td>
-              <td><a href="#" class="btn btn-sm btn-primary">View on Map</a></td>
-            </tr>
-            <tr>
-              <td><a href="#">T534CBS</a></td>
-              <td>Udin Wayang</td>
-              <td>Nasi Padang</td>
-              <td><span class="badge badge-warning">40 mins</span></td>
-              <td>Kimara</td>
-              <td><a href="#" class="btn btn-sm btn-primary">View on Map</a></td>
-            </tr>
+            {% for bs in busses %}
+              <tr>
+                <td><a href="#">{{ bs.plate_no }}</a></td>
+                <td>{{ bs.driver_assigned }}</td>
+                <td>{{ bs.attendant_assigned }}</td>
+                <td><span class="badge badge-warning">40 mins</span></td>
+                <td>{{ bs.current_address }}</td>
+                <td><a href="#" class="btn btn-sm btn-primary">View on Map</a></td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

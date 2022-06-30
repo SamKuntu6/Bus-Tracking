@@ -9,9 +9,10 @@ urlpatterns = [
     # path('index', views.home, name="home"),
     path('buscreate', views.bus_create, name="bus_create"),
     path('busview', views.bus_view, name="bus_view"),
+    path('delete/<int:pk>', views.deletebus, name='delete_bus'),
     path('createroutes', views.create_route, name="create_route"),
     path('directions', views.directions, name="directions"),
     path('settings', views.settings_view, name="settingsview"),
     path('emergency', views.emergency_view, name="emergencyview"),
-    path('updatebus/<str:pk>/', views.updatebus, name="updatebus"),
+    path('updatebus/<int:pk>', views.updatebus, name="update_bus"),
 ]

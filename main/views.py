@@ -1,4 +1,5 @@
 from multiprocessing import Condition
+from tkinter import TRUE
 from unicodedata import name
 from django.shortcuts import render, redirect, reverse
 from django.conf import settings
@@ -7,6 +8,9 @@ from bustracking.mixins import Directions
 from users.models import *
 from main.models import *
 from bustracking.decorators import unauthenticated_user
+from django.views import View
+from django.template import loader
+from django.contrib import messages
 
 
 '''
@@ -88,14 +92,16 @@ def directions(request):
 
 
 def home(request):
-
-
-	return render(request, 'main/index.html')
-
+	busses = Buss.objects.all().values('plate_no', 'driver_assigned', 'attendant_assigned', 'capacity',
+	 'condition', 'status', 'current_address')
+	print(busses)
+	context = {'busses': busses}
+	return render(request, 'main/index.html', context)
 
 
 def bus_create(request):
-	# Values to send to the view 
+	# for only this web database
+		# Values to send to the view 
 	attendant_users = Employee.objects.exclude(type = "Driver").values('name')
 	driver_users = Employee.objects.exclude(type = "Attendant").values('name')
 	driver_list = []
@@ -117,10 +123,12 @@ def bus_create(request):
 		Buss.objects.create(
 			plate_no= plate_no,
 			driver_assigned=driver,
-			attendant_assigned=attendant, 
-			capacity=capacity, 
+			attendant_assigned=attendant,
+			capacity=capacity,
 			)
-		return redirect('main:buscreate')
+		return redirect('main:bus_create')
+	
+	# for firestore connections and updates
 
 	context = {
 		'attendants':attendant_list,
@@ -131,30 +139,79 @@ def bus_create(request):
 
 
 def bus_view(request):
-	busses = Buss.objects.all().values('plate_no', 'driver_assigned', 'attendant_assigned', 'capacity',
-	 'condition', 'status', 'current_address')
-	print(busses)
-	context = {'busses': busses}
+	# for this web database only
+		# Values to send to the view 
+	attendant_users = Employee.objects.exclude(type = "Driver").values('name')
+	driver_users = Employee.objects.exclude(type = "Attendant").values('name')
+	driver_list = []
+	attendant_list = []
+
+	for drv in driver_users:
+		driver_list.append(drv['name'])
+	
+	for attend in attendant_users:
+		attendant_list.append(attend['name'])
+		
+	busses = Buss.objects.all().values('id', 'plate_no', 'driver_assigned', 'attendant_assigned', 'capacity',
+	'condition', 'status', 'current_address')
+
+	# for firestore connections and fetching
+
+	context = {
+		'busses': busses,
+		'attendants':attendant_list,
+		'drivers': driver_list
+		}
 	return render(request, 'main/busview.html', context)
 
 
+
+def deletebus(request, pk):
+	# for only this web database
+	bus = Buss.objects.filter(id=pk)
+	bus.delete()
+	messages.success(request, 'Bus Info deleted successfully!')
+
+	# for firestore connection
+	return redirect('main:bus_view')
+
+
+
 def updatebus(request, pk):
-	
-	
-	context = {}
-	return render(request, 'main/busview/#editModal.html', context)
+	# for only this web database
+	if Buss.objects.filter(id=pk).exists():
+		plate_no = request.POST.get('plate_no')
+		driver = request.POST.get('driver')
+		attendant = request.POST.get('attendant')
+		capacity = request.POST.get('capacity')
+		state = request.POST.get('state')
+
+		Buss.objects.filter(id=pk).update(
+			plate_no= plate_no,
+			driver_assigned=driver,
+			attendant_assigned=attendant,
+			capacity=capacity,
+			status=state,
+		)
+
+	# for firestore updates
+	return redirect('main:bus_view')
 
 
 
+# for future creation
 def settings_view(request):
 	return render(request, 'main/settings.html')
 
 
 
 def emergency_view(request):
+	# for only this web database
 	busses_emergency = Buss.objects.filter(condition = True).values()
+	# obj.last_accessed = timezone.now()
 
-	print(busses_emergency)
-	context = {}
+	# for firestore connections and updates
+
+	context = {'busses': busses_emergency}
 	return render(request, 'main/emergency.html', context)
 	
